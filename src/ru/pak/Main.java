@@ -1,8 +1,5 @@
 package ru.pak;
 
-import java.sql.SQLOutput;
-import java.util.Scanner;
-
 public class Main {
 
     public static final String ALPHABET = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя,”:-!? ";
@@ -11,8 +8,16 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
-        Screens.choiceMode();
-        Screens.makeChoice();
+        Back.prepareAlphabet(ALPHABET);
+
+        while (true) {
+            Front.choiceMode();
+            if (Front.makeChoice(0,2) == 1) {
+                Front.enterKey();
+                Back.crypto(Front.enterPath("Введите путь к файлу для шифрования", "Введите путь для сохранения файла");
+            }
+
+        }
     }
 }
 
