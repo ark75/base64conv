@@ -8,36 +8,26 @@ import java.util.Scanner;
 import static java.lang.String.format;
 
 public class Front {
-    public static int choice;
-    private static Path inputPathFile;
-    public static final String QUESTION = "Выберите режим";
+
     public static final String CHOICE = "Введите цифру (от %d до  %d ) и нажмите Enter, 0 для выхода";
     public static final String ERR_IN_MESSAGE = "Неверный ввод, введите снова!";
-    public static final String MESSAGE_PATH_IN = "Введите путь для чтения файла";
-    public static final String MESSAGE_PATH_OUT = "Введите путь для записи файла";
     public static final String MESSAGE_FILE_NOT_EXISTS = "Указанный файл/путь не существует. Будет создан новый файл.";
-
-
-    public static void choiceMode() {
-        System.out.println(QUESTION);
-        System.out.println("1. Шифратор/Дешифратор");
-        System.out.println("2. Криптоанализатор");
-    }
 
     public static int makeChoice(int start, int end) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println(format(CHOICE, start, end));
-
+        System.out.printf((CHOICE) + "%n", start, end);
+        int choice;
         while (true) {
             try {
                 choice = scanner.nextInt();
-                if (choice >= start && choice <= end) {
+                if (choice == 0) {
+                    System.exit(0);
+                } else if (choice >= start && choice <= end) {
                     break;
                 } else {
                     System.out.println(ERR_IN_MESSAGE);
                     scanner.next();
                 }
-
             } catch (Exception e) {
                 System.out.println(ERR_IN_MESSAGE);
                 scanner.next();
@@ -46,15 +36,11 @@ public class Front {
         return choice;
     }
 
-    public static void enterKey() {
-        System.out.println("Введите ключ");
-        Back.setKey(makeChoice(0, (Back.cryptoAlphabet.length-1)));
-    }
-
     public static Path enterPath() {
 
         Scanner scanner = new Scanner(System.in);
         String inputPath = "";
+        Path inputPathFile;
         while (true) {
             try {
                 inputPath = scanner.nextLine();
@@ -69,16 +55,13 @@ public class Front {
                     System.out.println(ERR_IN_MESSAGE);
                     scanner.next();
                 }
-
             } catch (Exception e) {
                 System.out.println(ERR_IN_MESSAGE);
-
                 scanner.next();
             }
         }
         return inputPathFile;
     }
-
 }
 
 
