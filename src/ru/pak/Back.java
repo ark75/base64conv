@@ -20,7 +20,7 @@ public class Back {
 
     public static void encrypt(Path pathIn, Path pathOut) {
         try {
-            System.out.println();
+
             String in = Files.readString(pathIn).toLowerCase();
             StringBuilder out = new StringBuilder();
             for (int i = 0; i < in.length(); i++) {
@@ -46,7 +46,7 @@ public class Back {
 
     public static void decrypt(Path pathin, Path pathout) {
         try {
-            System.out.println();
+
             String in = Files.readString(pathin).toLowerCase();
             StringBuilder out = new StringBuilder();
             for (int i = 0; i < in.length(); i++) {
@@ -87,7 +87,6 @@ public class Back {
         } catch (
                 Exception e) {
             e.printStackTrace();
-
         }
         return null;
     }
@@ -122,9 +121,6 @@ public class Back {
                 flag2 = false;
             }
         }
-        System.out.println(Back.getKey());
-        System.out.println(flag1 + "----" + flag2);
-        System.out.println(flag1 && flag2);
         return flag1 && flag2;
     }
 
@@ -150,35 +146,50 @@ public class Back {
         return null;
     }
 
-    public static void statAnalysis(Path inputFile, Path inputFile1, Path outputFile) {
-        HashMap<Character, Double> statistic = new HashMap<>();
-        HashMap<Character, Double> statistic2 = new HashMap<>();
-        HashMap<Character, Character> table = new HashMap<>();
-        statistic = getStatistic(inputFile);
-        statistic2 = getStatistic(inputFile1);
-        assert statistic != null;
-        for (Character char1 : statistic.keySet()) {
-            assert statistic2 != null;
-            for (Character char2 : statistic2.keySet()) {
-                if ((statistic.get(char1) / (statistic2.get(char2)) > 0.95) && (statistic.get(char1) / (statistic2.get(char2)) < 1.05)) {
-                    table.put(char1, char2);
-                }
-                if (!table.containsKey(char1)) {
-                    Character unknown = (char) 42;
-                    table.put(char1, unknown);
-                }
+    public static void statAnalysis(Path encryptedFile, Path sampleText, Path decryptedFile) {
+        HashMap<Character, Double> statsOfDecryptedFile = new HashMap<>();
+        HashMap<Character, Double> statsOfSampleText = new HashMap<>();
+        HashMap<Character, Character> tableOfCorrespondence = new HashMap<>();
+        statsOfDecryptedFile = getStatistic(encryptedFile);
+        statsOfSampleText = getStatistic(sampleText);
+        assert statsOfSampleText != null;
+        assert statsOfDecryptedFile != null;
+
+        while (!statsOfDecryptedFile.isEmpty()) {
+            while (!statsOfSampleText.isEmpty()) {
+                tableOfCorrespondence.put(mostFreqChar(statsOfDecryptedFile), mostFreqChar(statsOfSampleText));
+                statsOfSampleText.remove(mostFreqChar(statsOfSampleText));
+                statsOfDecryptedFile.remove(mostFreqChar(statsOfDecryptedFile));
             }
         }
         try {
             StringBuilder out = new StringBuilder();
-            String in = Files.readString(inputFile).toLowerCase();
+            String in = Files.readString(encryptedFile).toLowerCase();
             for (int i = 0; i < in.length(); i++) {
-                out.append(table.get(in.charAt(i)));
+                out.append(tableOfCorrespondence.get(in.charAt(i)));
             }
-            Files.writeString(outputFile, out);
+            Files.writeString(decryptedFile, out);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static Character mostFreqChar(HashMap<Character, Double> valuesInMap) {
+        if (valuesInMap.isEmpty()) {
+            return null;
+        }
+        Double maxValue = 0.0;
+        for (Double value : valuesInMap.values()) {
+            if (value >= maxValue) {
+                maxValue = value;
+            }
+        }
+        for (Map.Entry<Character, Double> entry : valuesInMap.entrySet()) {
+            if (entry.getValue() == maxValue) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }
 
